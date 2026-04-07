@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VTM</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body class="mrrobot">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-logo">
+      <svg width="20" height="20" viewBox="0 0 16 16" fill="none">
+        <rect x="1" y="1" width="6" height="6" rx="1.2" fill="#fff" opacity="0.9"/>
+        <rect x="9" y="1" width="6" height="6" rx="1.2" fill="#fff" opacity="0.65"/>
+        <rect x="1" y="9" width="6" height="6" rx="1.2" fill="#fff" opacity="0.65"/>
+        <rect x="9" y="9" width="6" height="6" rx="1.2" fill="#fff" opacity="0.4"/>
+      </svg>
+    </div>
+    <div class="header-text">
+      <h1 data-i18n="brand.short">VTM</h1>
+      <p data-i18n="brand.subtitle">Visual tab manager</p>
+    </div>
+  </div>
+
+  <!-- Domain status -->
+  <div class="domain-card" id="domainCard">
+    <div class="domain-row">
+      <span class="status-dot" id="statusDot"></span>
+      <span class="domain-name" id="domainName" data-i18n="popup.loading">Loading…</span>
+    </div>
+    <div class="selector-preview" id="selectorPreview"></div>
+    <div class="no-selector" id="noSelectorText" data-i18n="popup.selectorNotSet">No selector configured</div>
+  </div>
+
+  <!-- Tabs count -->
+  <div class="tabs-count" id="tabsCountRow">
+    <span data-i18n="popup.tabsOnSite">Tabs on this site:</span> <strong id="tabsCount">0</strong>
+  </div>
+
+  <!-- Manager open mode -->
+  <div class="mode-card">
+    <span class="mode-label" data-i18n="popup.openManagerMode">Open manager in:</span>
+    <div class="mode-options">
+      <label class="mode-option" id="modeTab">
+        <input type="radio" name="managerMode" value="tab">
+        <span class="mode-btn"><span>📑</span><span data-i18n="popup.modeTab">Tab</span></span>
+      </label>
+      <label class="mode-option" id="modeWindow">
+        <input type="radio" name="managerMode" value="window">
+        <span class="mode-btn"><span>🪟</span><span data-i18n="popup.modeWindow">Window</span></span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Action buttons -->
+  <div class="actions">
+    <button class="btn btn-orange" id="btnPicker">
+      <span class="btn-icon">🖱️</span>
+      <span id="btnPickerLabel" data-i18n="popup.pickElement">Pick element</span>
+    </button>
+
+    <button class="btn btn-green" id="btnCapture" style="display:none">
+      <span class="btn-icon">📸</span>
+      <span data-i18n="popup.captureNow">Capture now</span>
+    </button>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btnManager">
+        <span class="btn-icon">🗂️</span>
+        <span data-i18n="popup.manager">Manager</span>
+      </button>
+      <button class="btn btn-secondary" id="btnSettings">
+        <span class="btn-icon">⚙️</span>
+        <span data-i18n="popup.settings">Settings</span>
+      </button>
+    </div>
+
+    <button class="btn btn-danger" id="btnClear" style="display:none">
+      <span class="btn-icon">🗑️</span>
+      <span data-i18n="popup.reset">Reset</span>
+    </button>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="../shared/ui.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
