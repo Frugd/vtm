@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VTM Manager</title>
+  <link rel="stylesheet" href="manager.css">
+</head>
+<body class="mrrobot">
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="logo">
+        <svg width="22" height="22" viewBox="0 0 16 16" fill="none">
+          <rect x="1" y="1" width="6" height="6" rx="1.2" fill="#fff" opacity="0.9"/>
+          <rect x="9" y="1" width="6" height="6" rx="1.2" fill="#fff" opacity="0.65"/>
+          <rect x="1" y="9" width="6" height="6" rx="1.2" fill="#fff" opacity="0.65"/>
+          <rect x="9" y="9" width="6" height="6" rx="1.2" fill="#fff" opacity="0.4"/>
+        </svg>
+      </div>
+      <div class="header-info">
+        <h1 data-i18n="brand.short">VTM</h1>
+        <p id="headerSubtitle" data-i18n="brand.subtitle">Visual tab manager</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="btn-icon-only" id="btnThemeToggle" data-i18n-title="manager.themeToggleTitle" title="Switch theme">🌙</button>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="tabs-nav">
+    <button class="nav-tab active" data-tab="manager">
+      <span>🗂️</span> <span data-i18n="manager.managerTab">Manager</span>
+    </button>
+    <button class="nav-tab" data-tab="settings">
+      <span>⚙️</span> <span data-i18n="manager.settingsTab">Settings</span>
+    </button>
+  </nav>
+
+  <!-- ═══ TAB: MANAGER ═══ -->
+  <div class="tab-content active" id="tab-manager">
+
+    <!-- Control Bar -->
+    <div class="control-bar">
+      <div class="control-left">
+        <div class="domain-selector">
+          <label class="sr-only" data-i18n="manager.domainLabel">Domain</label>
+          <div class="select-wrap">
+            <select id="hostSelect">
+              <option value="" data-i18n="manager.allDomains">— All domains —</option>
+            </select>
+          </div>
+        </div>
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" data-i18n-placeholder="manager.searchPlaceholder" placeholder="Search by title…" autocomplete="off">
+          <button class="search-clear" id="searchClear" style="display:none">✕</button>
+        </div>
+      </div>
+      <div class="control-right">
+        <div class="counter" id="tabsCounter" style="display:none">
+          <span id="tabsVisible">0</span>/<span id="tabsTotal">0</span> <span id="tabsCounterSuffix" data-i18n="manager.records">items</span>
+        </div>
+        <button class="btn btn-secondary" id="btnRefresh" data-i18n-title="manager.refresh" title="Refresh">
+          <span class="btn-icon">🔄</span>
+          <span class="btn-label" data-i18n="manager.refresh">Refresh</span>
+        </button>
+        <button class="btn btn-danger" id="btnClearThumbs" data-i18n-title="manager.clear" title="Clear">
+          <span class="btn-icon">🗑️</span>
+          <span class="btn-label" data-i18n="manager.clear">Clear</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Empty states -->
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">🎯</div>
+      <h2 data-i18n="manager.getStarted">Get started</h2>
+      <p data-i18n="manager.getStartedDescription">Open tabs, pick an element to capture, and navigate visually.</p>
+      <div class="empty-steps">
+        <div class="step"><strong>1.</strong> <span data-i18n="manager.step1">Click “Pick element” and choose the preview area.</span></div>
+        <div class="step"><strong>2.</strong> <span data-i18n="manager.step2">Select a domain and click “Refresh”.</span></div>
+        <div class="step"><strong>3.</strong> <span data-i18n="manager.step3">Click cards to switch between tabs.</span></div>
+      </div>
+    </div>
+
+    <div class="empty-state" id="noTabsState" style="display:none">
+      <div class="empty-icon">🗂️</div>
+      <h2 data-i18n="manager.noItems">No items</h2>
+      <p><span data-i18n="manager.noThumbnailsFor">No thumbnails for</span> <strong id="noTabsDomain"></strong></p>
+    </div>
+
+    <!-- Thumbnails Grid -->
+    <div class="grid" id="thumbnailsGrid" style="display:none"></div>
+
+    <!-- Pagination -->
+    <div class="pagination" id="pagination" style="display:none">
+      <button class="btn btn-secondary btn-sm" id="btnLoadMore">
+        <span data-i18n="manager.loadMore">Load more</span> <span id="loadMoreCount"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ TAB: SETTINGS ═══ -->
+  <div class="tab-content" id="tab-settings">
+    <div class="settings-container" id="settingsContainer">
+
+      <!-- Domain Configs section -->
+      <section class="settings-section" id="sectionSelectors">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">⚙️ <span data-i18n="manager.domainSettings">Domain settings</span></h2>
+            <p class="section-desc" data-i18n="manager.domainSettingsDescription">CSS selectors and title keywords used for thumbnail captures.</p>
+          </div>
+
+        </div>
+
+        <div class="card">
+          <h3 data-i18n="manager.addOrEdit">Add / edit</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label data-i18n="manager.domain">Domain</label>
+              <input type="text" id="newHostname" placeholder="example.com" autocomplete="off">
+            </div>
+            <div class="form-group grow">
+              <label data-i18n="manager.cssSelector">CSS selector</label>
+              <input type="text" id="newSelector" placeholder=".product-card__image" autocomplete="off">
+            </div>
+            <div class="form-group grow">
+              <label data-i18n="manager.keywordInTitle">Title keyword</label>
+              <input type="text" id="newKeyword" data-i18n-placeholder="manager.keywordPlaceholder" placeholder="Post (comma-separated)" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label>&nbsp;</label>
+              <button class="btn btn-primary" id="btnSaveSelector">💾 <span data-i18n="manager.save">Save</span></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 data-i18n="manager.savedConfigs">Saved</h3>
+          <div id="selectorsList" class="items-list">
+            <div class="loading-inline"><span class="spinner"></span> <span data-i18n="manager.loading">Loading…</span></div>
+          </div>
+        </div>
+
+        <div class="card danger-zone">
+          <div class="setting-row">
+            <div class="setting-info">
+              <span class="setting-label" data-i18n="manager.clearAllDomainSettings">Delete all domain settings</span>
+              <span class="setting-hint" data-i18n="manager.irreversibleAction">This action cannot be undone</span>
+            </div>
+            <button class="btn btn-danger" id="btnClearAllSelectors">🗑️ <span data-i18n="manager.clear">Clear</span></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- System section -->
+      <section class="settings-section" id="sectionSystem">
+        <h2 class="section-title">🔧 <span data-i18n="manager.system">System</span></h2>
+        <div class="card">
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-info-inline setting-info-header">
+                <span class="setting-label" data-i18n="manager.allowAutoCapture">Enable auto capture</span>
+                <span class="setting-status off" id="autoCaptureStatus" data-i18n="manager.accessRevoked">Access revoked</span>
+              </div>
+              <span class="setting-hint" data-i18n="manager.autoCaptureHint">Grant access to all sites to capture elements automatically on newly opened pages without clicking the extension icon.</span>
+            </div>
+            <button class="btn btn-primary" id="btnRequestPermissions" data-i18n="manager.checking">Checking…</button>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info setting-info-inline">
+              <span class="setting-label" data-i18n="manager.captureDelay">Capture delay</span>
+              <span
+                class="setting-help"
+                tabindex="0"
+                data-i18n-aria-label="manager.captureDelayHint"
+                data-i18n-tooltip="manager.captureDelayHint"
+                aria-label="Milliseconds. Increase it if the browser becomes sluggish."
+                data-tooltip="Milliseconds. Increase it if the browser becomes sluggish."
+              >!</span>
+            </div>
+            <div class="setting-field">
+              <input
+                id="captureDelay"
+                class="setting-input"
+                type="number"
+                min="0"
+                step="50"
+                inputmode="numeric"
+                list="captureDelayPresets"
+              >
+              <span class="setting-unit" data-i18n="manager.milliseconds">ms</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Display section -->
+      <section class="settings-section" id="sectionDisplay">
+        <h2 class="section-title">🎨 <span data-i18n="manager.display">Display</span></h2>
+
+        <div class="card">
+          <div class="setting-row">
+            <div class="setting-info setting-info-inline">
+              <span class="setting-label" data-i18n="manager.thumbnailsPerPage">Thumbnails per page</span>
+              <span
+                class="setting-help"
+                tabindex="0"
+                data-i18n-aria-label="manager.performanceHint"
+                data-i18n-tooltip="manager.performanceHint"
+                aria-label="Lower values improve performance"
+                data-tooltip="Lower values improve performance"
+              >!</span>
+            </div>
+            <div class="setting-field">
+              <input
+                id="pageSizeSelect"
+                class="setting-input"
+                type="number"
+                min="1"
+                step="1"
+                inputmode="numeric"
+                list="pageSizePresets"
+              >
+              <span class="setting-unit" data-i18n="manager.itemsUnit">pcs</span>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info setting-info-inline">
+              <span class="setting-label" data-i18n="manager.cardSize">Card size</span>
+              <span
+                class="setting-help"
+                tabindex="0"
+                data-i18n-aria-label="manager.widthInPixels"
+                data-i18n-tooltip="manager.widthInPixels"
+                aria-label="Width in pixels"
+                data-tooltip="Width in pixels"
+              >!</span>
+            </div>
+            <select id="cardSizeSelect" class="setting-select">
+              <option value="180" data-i18n="manager.cardSizeSmall">Small (180)</option>
+              <option value="240" selected data-i18n="manager.cardSizeMedium">Medium (240)</option>
+              <option value="300" data-i18n="manager.cardSizeLarge">Large (300)</option>
+              <option value="360" data-i18n="manager.cardSizeXL">XL (360)</option>
+            </select>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info setting-info-inline">
+              <span class="setting-label" data-i18n="manager.theme">Theme</span>
+              <span
+                class="setting-help"
+                tabindex="0"
+                data-i18n-aria-label="manager.themeHint"
+                data-i18n-tooltip="manager.themeHint"
+                aria-label="Manager appearance"
+                data-tooltip="Manager appearance"
+              >!</span>
+            </div>
+            <select id="themeSelect" class="setting-select">
+              <option value="dark" data-i18n="manager.themeDark">🌙 Dark</option>
+              <option value="light" data-i18n="manager.themeLight">☀️ Light</option>
+              <option value="mrrobot" data-i18n="manager.themeMrRobot">💀 Mr. Robot</option>
+            </select>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info setting-info-inline">
+              <span class="setting-label" data-i18n="manager.language">Language</span>
+              <span
+                class="setting-help"
+                tabindex="0"
+                data-i18n-aria-label="manager.languageHint"
+                data-i18n-tooltip="manager.languageHint"
+                aria-label="Popup, manager, and picker language"
+                data-tooltip="Popup, manager, and picker language"
+              >!</span>
+            </div>
+            <select id="languageSelect" class="setting-select">
+              <option value="en" data-i18n="manager.languageEnglish">English</option>
+              <option value="ru" data-i18n="manager.languageRussian">Russian</option>
+            </select>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info setting-info-inline">
+              <span class="setting-label" data-i18n="manager.closedTabsTTL">Closed tab lifetime</span>
+              <span
+                class="setting-help"
+                tabindex="0"
+                data-i18n-aria-label="manager.closedTabsTTLHint"
+                data-i18n-tooltip="manager.closedTabsTTLHint"
+                aria-label="How long closed-tab thumbnails are kept before deletion"
+                data-tooltip="How long closed-tab thumbnails are kept before deletion"
+              >!</span>
+            </div>
+            <div class="setting-field">
+              <input
+                id="closedTabTTL"
+                class="setting-input"
+                type="number"
+                min="0"
+                step="1"
+                inputmode="numeric"
+                list="closedTabTTLPresets"
+              >
+              <span class="setting-unit" data-i18n="manager.minutes">min</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Card template -->
+  <template id="thumbCardTemplate">
+    <div class="thumb-card" data-url="">
+      <div class="thumb-img-wrap">
+        <div class="thumb-loader"><span class="spinner"></span></div>
+        <img class="thumb-img" src="" alt="" loading="lazy">
+        <div class="thumb-placeholder" style="display:none">
+          <span>⚠️</span>
+          <span class="placeholder-text">Element not found</span>
+        </div>
+        <div class="thumb-overlay">
+          <button class="thumb-open-btn">↗️ Open tab</button>
+        </div>
+        <!-- Closed tab overlay -->
+        <div class="thumb-closed-overlay" style="display:none">
+          <button class="closed-restore-btn">🔄 Restore</button>
+        </div>
+        <button class="thumb-delete-btn" title="Delete">✕</button>
+      </div>
+      <div class="thumb-info">
+        <img src="" alt="" class="favicon">
+        <div class="thumb-meta">
+          <div class="thumb-title"></div>
+          <div class="thumb-url"></div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <datalist id="captureDelayPresets">
+    <option value="100"></option>
+    <option value="500"></option>
+    <option value="1000"></option>
+    <option value="2000"></option>
+    <option value="5000"></option>
+    <option value="10000"></option>
+    <option value="15000"></option>
+    <option value="30000"></option>
+  </datalist>
+
+  <datalist id="pageSizePresets">
+    <option value="20"></option>
+    <option value="40"></option>
+    <option value="60"></option>
+    <option value="100"></option>
+  </datalist>
+
+  <datalist id="closedTabTTLPresets">
+    <option value="5"></option>
+    <option value="15"></option>
+    <option value="30"></option>
+    <option value="60"></option>
+    <option value="1440"></option>
+    <option value="0"></option>
+  </datalist>
+
+  <script src="../shared/ui.js"></script>
+  <script src="manager.js"></script>
+</body>
+</html>
