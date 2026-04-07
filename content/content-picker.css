@@ -1,0 +1,15 @@
+/*
+ * content-picker.css - Picker mode styles
+ * Injected via scripting.insertCSS before content-picker.js
+ */
+
+/* Crosshair cursor when picker is active */
+html[data-vtm-picker],
+html[data-vtm-picker] * {
+  cursor: crosshair !important;
+}
+
+/* Smooth scroll for scrollIntoView */
+html {
+  scroll-behavior: smooth;
+}
